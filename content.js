@@ -50,11 +50,43 @@
   }
 
   // Grid tiles carry data-item-id="album-1234567" or "track-1234567".
+  // Search result tiles instead carry data-search='{"type":"a","id":1234567}'
+  // (type "a" = album, "t" = track; other types like "b"/"l"/"f" are bands,
+  // labels, and fans, which we ignore).
   function keyFor(el) {
-    const raw = el.getAttribute("data-item-id") || "";
-    const m = raw.match(/^(album|track)-(\d+)$/);
-    if (!m) return null;
-    return (m[1] === "album" ? "a" : "t") + m[2];
+    const itemId = el.getAttribute("data-item-id");
+    if (itemId) {
+      const m = itemId.match(/^(album|track)-(\d+)$/);
+      if (m) return (m[1] === "album" ? "a" : "t") + m[2];
+    }
+
+    const searchAttr = el.getAttribute("data-search");
+    if (searchAttr) {
+      try {
+        const parsed = JSON.parse(searchAttr);
+        if (parsed && parsed.id && (parsed.type === "a" || parsed.type === "t")) {
+          return parsed.type + parsed.id;
+        }
+      } catch (e) {
+        // not JSON, or not a match — ignore
+      }
+    }
+
+    // Discover page cards: data-test="results-grid-item-1234567". The type
+    // (album vs track) isn't in this attribute, so infer it from the card's
+    // link URL instead.
+    const testAttr = el.getAttribute("data-test");
+    if (testAttr) {
+      const m = testAttr.match(/^results-grid-item-(\d+)$/);
+      if (m) {
+        const link = el.querySelector('a[href*="/album/"], a[href*="/track/"]');
+        const href = (link && link.getAttribute("href")) || "";
+        const type = href.includes("/track/") ? "t" : "a";
+        return type + m[1];
+      }
+    }
+
+    return null;
   }
 
   function labelItem(el) {
@@ -80,7 +112,8 @@
     badge.style.backgroundColor = color;
 
     // Anchor the badge to the artwork thumbnail so it sits over the tile.
-    const art = el.querySelector(".art") || el;
+    // Grid/search pages use ".art"; Discover page cards use ".image-container".
+    const art = el.querySelector(".art") || el.querySelector(".image-container") || el;
     if (getComputedStyle(art).position === "static") {
       art.style.position = "relative";
     }
@@ -90,7 +123,11 @@
   function scan() {
     Promise.all([getCollectionSummary(), loadSettings()]).then(() => {
       document
-        .querySelectorAll("[data-item-id]:not([data-bc-owned-checked])")
+        .querySelectorAll(
+          "[data-item-id]:not([data-bc-owned-checked]), " +
+            ".searchresult[data-search]:not([data-bc-owned-checked]), " +
+            '[data-test^="results-grid-item-"]:not([data-bc-owned-checked])'
+        )
         .forEach(labelItem);
     });
   }

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Bandcamp Owned/Wishlist Labels",
-  "version": "1.1",
+  "version": "1.2",
   "description": "Shows 'You own this' or 'In Wishlist' badges on Bandcamp grid views (label pages, artist pages, etc).",
   "permissions": ["storage"],
   "host_permissions": [
