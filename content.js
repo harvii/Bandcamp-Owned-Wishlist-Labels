@@ -3,9 +3,26 @@
 // with "You own this" or "In Wishlist" based on your Bandcamp collection.
 
 (function () {
+  const DEFAULT_SETTINGS = {
+    ownedColor: "#2e7d32",
+    ownedText: "You own this",
+    wishlistColor: "#1565c0",
+    wishlistText: "In Wishlist",
+  };
+
+  let settings = DEFAULT_SETTINGS;
+  let settingsPromise = null;
   let ownedSet = null;
   let wishlistSet = null;
   let fetchPromise = null;
+
+  function loadSettings() {
+    if (settingsPromise) return settingsPromise;
+    settingsPromise = browser.storage.local.get(DEFAULT_SETTINGS).then((stored) => {
+      settings = Object.assign({}, DEFAULT_SETTINGS, stored);
+    });
+    return settingsPromise;
+  }
 
   // Asks the background script (privileged, not bound by page CORS) for the
   // logged-in fan's full collection + wishlist as sets of keys like
@@ -47,19 +64,20 @@
     el.dataset.bcOwnedChecked = "1";
 
     let text = null;
-    let cls = null;
+    let color = null;
     if (ownedSet.has(key)) {
-      text = "You own this";
-      cls = "bc-owned";
+      text = settings.ownedText;
+      color = settings.ownedColor;
     } else if (wishlistSet.has(key)) {
-      text = "In Wishlist";
-      cls = "bc-wishlist";
+      text = settings.wishlistText;
+      color = settings.wishlistColor;
     }
     if (!text) return;
 
     const badge = document.createElement("div");
-    badge.className = "bc-owned-badge " + cls;
+    badge.className = "bc-owned-badge";
     badge.textContent = text;
+    badge.style.backgroundColor = color;
 
     // Anchor the badge to the artwork thumbnail so it sits over the tile.
     const art = el.querySelector(".art") || el;
@@ -70,7 +88,7 @@
   }
 
   function scan() {
-    getCollectionSummary().then(() => {
+    Promise.all([getCollectionSummary(), loadSettings()]).then(() => {
       document
         .querySelectorAll("[data-item-id]:not([data-bc-owned-checked])")
         .forEach(labelItem);

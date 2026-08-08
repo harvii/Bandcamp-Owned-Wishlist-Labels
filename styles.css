@@ -13,11 +13,3 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
   font-family: Arial, Helvetica, sans-serif;
 }
-
-.bc-owned-badge.bc-owned {
-  background: #2e7d32;
-}
-
-.bc-owned-badge.bc-wishlist {
-  background: #1565c0;
-}

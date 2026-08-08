@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Bandcamp Owned/Wishlist Labels — Settings</title>
+<style>
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 16px;
+    max-width: 360px;
+    color: #222;
+  }
+  h3 { margin-top: 0; }
+  label {
+    display: block;
+    margin-top: 14px;
+    font-size: 13px;
+    font-weight: bold;
+  }
+  input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 5px 6px;
+    margin-top: 4px;
+    font-size: 13px;
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+  }
+  input[type="color"] {
+    width: 40px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    cursor: pointer;
+  }
+  .row span { font-size: 12px; color: #555; }
+  button {
+    margin-top: 20px;
+    margin-right: 8px;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  #status {
+    margin-top: 12px;
+    font-size: 12px;
+    color: #2e7d32;
+    min-height: 14px;
+  }
+</style>
+</head>
+<body>
+  <h3>Owned / Wishlist Badge Settings</h3>
+
+  <label for="ownedText">"Owned" badge text</label>
+  <input type="text" id="ownedText" maxlength="40">
+  <div class="row">
+    <input type="color" id="ownedColor">
+    <span>badge color</span>
+  </div>
+
+  <label for="wishlistText">"Wishlist" badge text</label>
+  <input type="text" id="wishlistText" maxlength="40">
+  <div class="row">
+    <input type="color" id="wishlistColor">
+    <span>badge color</span>
+  </div>
+
+  <button id="save">Save</button>
+  <button id="reset">Reset to defaults</button>
+  <div id="status"></div>
+
+  <script src="options.js"></script>
+</body>
+</html>
