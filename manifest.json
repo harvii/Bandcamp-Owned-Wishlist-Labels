@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Bandcamp Owned/Wishlist Labels",
+  "version": "1.0",
+  "description": "Shows 'You own this' or 'In Wishlist' badges on Bandcamp grid views (label pages, artist pages, etc).",
+  "host_permissions": [
+    "https://bandcamp.com/*",
+    "https://*.bandcamp.com/*"
+  ],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.bandcamp.com/*"],
+      "css": ["styles.css"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "bandcamp-owned-wishlist@example.com",
+      "strict_min_version": "140.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  }
+}
