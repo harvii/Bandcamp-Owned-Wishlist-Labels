@@ -8,6 +8,9 @@
     ownedText: "You own this",
     wishlistColor: "#1565c0",
     wishlistText: "In Wishlist",
+    badgeStyle: "badge", // "badge" (overlay on artwork) or "heart" (icon next to title)
+    heartIcon: "\u2665", // ♥ solid heart by default
+    heartSize: 20, // px
   };
 
   let settings = DEFAULT_SETTINGS;
@@ -106,18 +109,52 @@
     }
     if (!text) return;
 
+    if (settings.badgeStyle === "heart") {
+      addHeartIcon(el, text, color);
+    } else {
+      addOverlayBadge(el, text, color);
+    }
+  }
+
+  function addOverlayBadge(el, text, color) {
     const badge = document.createElement("div");
     badge.className = "bc-owned-badge";
     badge.textContent = text;
     badge.style.backgroundColor = color;
 
-    // Anchor the badge to the artwork thumbnail so it sits over the tile.
     // Grid/search pages use ".art"; Discover page cards use ".image-container".
     const art = el.querySelector(".art") || el.querySelector(".image-container") || el;
     if (getComputedStyle(art).position === "static") {
       art.style.position = "relative";
     }
     art.appendChild(badge);
+  }
+
+  function addHeartIcon(el, text, color) {
+    // Grid/Discover pages use ".title"; search results use ".heading".
+    const textEl = el.querySelector(".title") || el.querySelector(".heading");
+    const heart = document.createElement("span");
+    heart.className = "bc-owned-heart";
+    heart.textContent = settings.heartIcon;
+    heart.style.color = color;
+    heart.style.fontSize = settings.heartSize + "px";
+    heart.title = text;
+
+    if (!textEl) {
+      // Fallback: no title row found, just drop it after the artwork.
+      const art = el.querySelector(".art") || el.querySelector(".image-container") || el;
+      art.insertAdjacentElement("afterend", heart);
+      return;
+    }
+
+    // Wrap the title element (left untouched, so any internal line breaks
+    // between album/artist are preserved) alongside the heart in an outer
+    // row, so the heart pins to the top-right without disturbing the text.
+    const wrapper = document.createElement("div");
+    wrapper.className = "bc-owned-heart-row";
+    textEl.parentNode.insertBefore(wrapper, textEl);
+    wrapper.appendChild(textEl);
+    wrapper.appendChild(heart);
   }
 
   function scan() {

@@ -24,6 +24,20 @@
     margin-top: 4px;
     font-size: 13px;
   }
+  input[type="number"] {
+    width: 80px;
+    box-sizing: border-box;
+    padding: 5px 6px;
+    margin-top: 4px;
+    font-size: 13px;
+  }
+  select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 5px 6px;
+    margin-top: 4px;
+    font-size: 13px;
+  }
   .row {
     display: flex;
     align-items: center;
@@ -69,6 +83,18 @@
     <input type="color" id="wishlistColor">
     <span>badge color</span>
   </div>
+
+  <label for="badgeStyle">Display style</label>
+  <select id="badgeStyle">
+    <option value="badge">Badge over artwork</option>
+    <option value="heart">Heart icon next to title</option>
+  </select>
+
+  <label for="heartIcon">Icon (used in "Heart icon" style) — paste any character/emoji</label>
+  <input type="text" id="heartIcon" maxlength="8">
+
+  <label for="heartSize">Icon size (px)</label>
+  <input type="number" id="heartSize" min="8" max="80" step="1">
 
   <button id="save">Save</button>
   <button id="reset">Reset to defaults</button>
